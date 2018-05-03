@@ -1,0 +1,30 @@
+﻿Build started 9/8/2017 12:27:17 PM.
+     1>Project "C:\gen\GitHub\Canvas3D\Canvas3D\Canvas3D.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include /I.\GeneratedFiles\Debug /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtCore /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtGui /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtOpenGL /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtWidgets /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtXml /I..\glm /I..\glew /I..\opencv\include /I"C:\CGAL-4.8.1\include" /I"C:\CGAL-4.8.1\auxiliary\gmp\include" /IC:\boost_1_58 /Zi /nologo /W1 /WX- /Od /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_OPENGL_LIB /D QT_WIDGETS_LIB /D QT_XML_LIB /Gm- /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt GLWidget3D.cpp
+         GLWidget3D.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\gen\GitHub\Canvas3D\x64\Debug\\Canvas3D.exe" /NOLOGO /LIBPATH:C:\Qt\Qt5.6.0\5.6\msvc2013_64\lib /LIBPATH:..\opencv\lib /LIBPATH:..\glew /LIBPATH:"C:\CGAL-4.8.1\lib" /LIBPATH:"C:\CGAL-4.8.1\auxiliary\gmp\lib" /LIBPATH:"C:\boost_1_58\lib64-msvc-12.0" qtmaind.lib Qt5Cored.lib Qt5Guid.lib Qt5OpenGLd.lib opengl32.lib glu32.lib Qt5Widgetsd.lib Qt5Xmld.lib opencv_world300d.lib glew32.lib "CGAL-vc120-mt-gd-4.8.1.lib" "CGAL_Core-vc120-mt-gd-4.8.1.lib" "CGAL_ImageIO-vc120-mt-gd-4.8.1.lib" "libgmp-10.lib" "libmpfr-4.lib" "libboost_thread-vc120-mt-gd-1_58.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\gen\GitHub\Canvas3D\x64\Debug\Canvas3D.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\gen\GitHub\Canvas3D\x64\Debug\Canvas3D.lib" /MACHINE:X64 x64\Debug\BoundingBox.obj
+         x64\Debug\Camera.obj
+         x64\Debug\Circle.obj
+         x64\Debug\moc_MainWindow.obj
+         x64\Debug\qrc_MainWindow.obj
+         x64\Debug\GLUtils.obj
+         x64\Debug\GLWidget3D.obj
+         x64\Debug\History.obj
+         x64\Debug\Layer.obj
+         x64\Debug\main.obj
+         x64\Debug\MainWindow.obj
+         x64\Debug\Operation.obj
+         x64\Debug\Polygon.obj
+         x64\Debug\Rectangle.obj
+         x64\Debug\RenderManager.obj
+         x64\Debug\Shader.obj
+         x64\Debug\ShadowMapping.obj
+         x64\Debug\Shape.obj
+         Canvas3D.vcxproj -> C:\gen\GitHub\Canvas3D\x64\Debug\Canvas3D.exe
+     1>Done Building Project "C:\gen\GitHub\Canvas3D\Canvas3D\Canvas3D.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.23
