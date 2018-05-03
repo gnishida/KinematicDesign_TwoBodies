@@ -880,6 +880,24 @@ namespace kinematics {
 				}
 			}
 		}
+
+		// generate geometry of joint between two ternary links
+		glm::dvec2 circle_center = kinematics.diagram.joints[3]->pos;
+		double z = std::min(kinematics.diagram.links[1]->z, kinematics.diagram.links[2]->z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth);
+		double height = std::abs(kinematics.diagram.links[1]->z - kinematics.diagram.links[2]->z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
+		glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
+		glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+
+		z += height;
+		height = options->link_depth + options->gap * 2;
+		glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
+		glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+
+		z += height;
+		height = options->joint_cap_depth;
+		glutils::drawCylinderZ(options->joint_cap_radius2, options->joint_cap_radius2, options->joint_cap_radius1, options->joint_cap_radius1, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
+		glutils::drawCylinderZ(options->joint_cap_radius1, options->joint_cap_radius1, options->joint_cap_radius2, options->joint_cap_radius2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+
 	}
 
 	void LinkageSynthesisWattI::saveSTL(const QString& dirname, const std::vector<Kinematics>& kinematics) {
