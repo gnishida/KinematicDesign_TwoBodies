@@ -75,6 +75,11 @@ namespace kinematics {
 			copied_diagram.bodies.push_back(body);
 		}
 
+		// copy connectors
+		for (int i = 0; i < connectors.size(); i++) {
+			copied_diagram.connectors.push_back(connectors[i]);
+		}
+
 		return copied_diagram;
 	}
 
@@ -460,6 +465,11 @@ namespace kinematics {
 			addPolygonToBody(body_id, kinematics::Polygon25D(pts, z, z + height));
 			addPolygonToBody(body_id, kinematics::Polygon25D(pts, -options->body_depth - z - height, -options->body_depth - z));
 		}
+
+		// HACK
+		// For the Watt-I six-bar linkage, we do not create joints [2] and [5] here.
+		// 
+		if (joint->id == 2 || joint->id == 5) return closest_point;
 
 		if (joint->z > link_z) {
 			// Create the joint part of the body

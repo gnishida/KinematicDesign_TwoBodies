@@ -12,7 +12,7 @@ namespace kinematics {
 		this->z = 0;
 	}
 
-	Link::Link(int id, bool driver, bool actual_link, double z) {
+	Link::Link(int id, bool driver, bool actual_link, int z) {
 		this->id = id;
 		this->angle = 0;
 		this->driver = driver;

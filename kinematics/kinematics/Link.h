@@ -18,11 +18,11 @@ namespace kinematics {
 		double angle;
 		bool driver;
 		bool actual_link;	// the coupler in the 4R four-bar linkage is usually no actual link because the moving body is used as a coupler.
-		double z;
+		int z;
 
 	public:
 		Link(int id);
-		Link(int id, bool driver, bool actual_link, double z);
+		Link(int id, bool driver, bool actual_link, int z);
 
 		bool isDetermined();
 		bool isGrounded();

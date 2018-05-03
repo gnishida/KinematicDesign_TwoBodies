@@ -451,6 +451,19 @@ namespace kinematics {
 			kin.diagram.addBody(kin.diagram.joints[0], kin.diagram.joints[1], copied_fixed_bodies[i]);
 		}
 
+		if (zorder.size() == 3 && kin.diagram.connectors.size() == 10) {
+			kin.diagram.connectors[0].z = zorder[0][0];
+			kin.diagram.connectors[1].z = zorder[0][1];
+			kin.diagram.connectors[2].z = zorder[1][0];
+			kin.diagram.connectors[3].z = zorder[1][1];
+			kin.diagram.connectors[4].z = zorder[1][2];
+			kin.diagram.connectors[5].z = zorder[1][3];
+			kin.diagram.connectors[6].z = zorder[2][0];
+			kin.diagram.connectors[7].z = zorder[2][1];
+			kin.diagram.connectors[8].z = zorder[2][2];
+			kin.diagram.connectors[9].z = zorder[2][3];
+		}
+
 		// calculte the range of motion
 		/*
 		std::pair<double, double> angle_range = checkRange(poses, points);
@@ -869,17 +882,6 @@ namespace kinematics {
 				glutils::drawPrism(pts, options->link_depth, glm::vec4(0.7, 0.7, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(0, 0, -options->body_depth - z - options->link_depth)), vertices);
 			}
 			else if (kinematics.diagram.links[j]->joints.size() == 3) {
-				/*
-				for (int k = 0; k < kinematics.diagram.links[j]->joints.size(); k++) {
-					int next = (k + 1) % kinematics.diagram.links[j]->joints.size();
-					glm::dvec2& p1 = kinematics.diagram.links[j]->joints[k]->pos;
-					glm::dvec2& p2 = kinematics.diagram.links[j]->joints[next]->pos;
-					std::vector<glm::dvec2> pts = generateRoundedBarPolygon(p1, p2, options->link_width / 2);
-					float z = kinematics.diagram.links[j]->z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth;
-					glutils::drawPrism(pts, options->link_depth, glm::vec4(0.7, 0.7, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(0, 0, z)), vertices);
-					glutils::drawPrism(pts, options->link_depth, glm::vec4(0.7, 0.7, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(0, 0, -options->body_depth - z - options->link_depth)), vertices);
-				}*/
-
 				float z = kinematics.diagram.links[j]->z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth;
 				std::vector<glm::dvec2> polygon = generateRoundedTrianglePolygon({ kinematics.diagram.links[j]->joints[0]->pos, kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[j]->joints[2]->pos }, options->link_width / 2);
 				glutils::drawPrism(polygon, options->link_depth, glm::vec4(0.7, 0.7, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(0, 0, z)), vertices);
@@ -887,23 +889,56 @@ namespace kinematics {
 			}
 		}
 
-		// generate geometry of joint between two ternary links
-		glm::dvec2 circle_center = kinematics.diagram.joints[3]->pos;
-		double z = std::min(kinematics.diagram.links[1]->z, kinematics.diagram.links[2]->z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth);
-		double height = std::abs(kinematics.diagram.links[1]->z - kinematics.diagram.links[2]->z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
-		glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
-		glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+		// generate geometry of joint [3], which is between two ternary links
+		generateJointGeometry(kinematics.diagram.joints[3]->pos, std::min(kinematics.diagram.links[1]->z, kinematics.diagram.links[2]->z), std::max(kinematics.diagram.links[1]->z, kinematics.diagram.links[2]->z), glm::vec4(0.7, 1, 0.7, 1), vertices);
 
-		z += height;
-		height = options->link_depth + options->gap * 2;
-		glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
-		glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+		// generate geometry of joints [2] and [5]
+		// Temporarly implementation
+		// We should use the z data from diagmra.connectors
+		std::vector<int> zs2 = { kinematics.diagram.connectors[2].z, kinematics.diagram.links[0]->z, kinematics.diagram.links[2]->z };
+		std::sort(zs2.begin(), zs2.end());
+		generateJointGeometry(kinematics.diagram.joints[2]->pos, zs2[1], zs2[2], glm::vec4(0.7, 1, 0.7, 1), vertices);
+		generateJointGeometry(kinematics.diagram.joints[2]->pos, zs2[1], zs2[0], glm::vec4(0.7, 1, 0.7, 1), vertices);
 
-		z += height;
-		height = options->joint_cap_depth;
-		glutils::drawCylinderZ(options->joint_cap_radius2, options->joint_cap_radius2, options->joint_cap_radius1, options->joint_cap_radius1, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, z)), vertices);
-		glutils::drawCylinderZ(options->joint_cap_radius1, options->joint_cap_radius1, options->joint_cap_radius2, options->joint_cap_radius2, height, glm::vec4(0.7, 1, 0.7, 1), glm::translate(glm::mat4(), glm::vec3(circle_center, -options->body_depth - z - height)), vertices);
+		std::vector<int> zs5 = { kinematics.diagram.connectors[3].z, kinematics.diagram.links[2]->z, kinematics.diagram.links[4]->z };
+		std::sort(zs5.begin(), zs5.end());
+		generateJointGeometry(kinematics.diagram.joints[5]->pos, zs5[1], zs5[2], glm::vec4(0.7, 1, 0.7, 1), vertices);
+		generateJointGeometry(kinematics.diagram.joints[5]->pos, zs5[1], zs5[0], glm::vec4(0.7, 1, 0.7, 1), vertices);
+	}
 
+	void LinkageSynthesisWattI::generateJointGeometry(const glm::dvec2& pos, int bottom_z, int top_z, const glm::vec4& color, std::vector<Vertex>& vertices) {
+		if (top_z >= bottom_z) {
+			double z = bottom_z * (options->link_depth + options->gap * 2 + options->joint_cap_depth);
+			double height = (top_z - bottom_z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
+			glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+
+			z += height;
+			height = options->link_depth + options->gap * 2;
+			glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+
+			z += height;
+			height = options->joint_cap_depth;
+			glutils::drawCylinderZ(options->joint_cap_radius2, options->joint_cap_radius2, options->joint_cap_radius1, options->joint_cap_radius1, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->joint_cap_radius1, options->joint_cap_radius1, options->joint_cap_radius2, options->joint_cap_radius2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+		}
+		else {
+			double z = top_z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) + options->gap;
+			double height = (bottom_z - top_z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
+			glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->link_width / 2, options->link_width / 2, options->link_width / 2, options->link_width / 2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+
+			height = options->link_depth + options->gap * 2;
+			z -= height;
+			glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->joint_radius, options->joint_radius, options->joint_radius, options->joint_radius, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+
+			height = options->joint_cap_depth;
+			z -= height;
+			glutils::drawCylinderZ(options->joint_cap_radius1, options->joint_cap_radius1, options->joint_cap_radius2, options->joint_cap_radius2, height, color, glm::translate(glm::mat4(), glm::vec3(pos, z)), vertices);
+			glutils::drawCylinderZ(options->joint_cap_radius2, options->joint_cap_radius2, options->joint_cap_radius1, options->joint_cap_radius1, height, color, glm::translate(glm::mat4(), glm::vec3(pos, -options->body_depth - z - height)), vertices);
+		}
 	}
 
 	void LinkageSynthesisWattI::saveSTL(const QString& dirname, const std::vector<Kinematics>& kinematics) {

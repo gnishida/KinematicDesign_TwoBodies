@@ -4,7 +4,7 @@
 
 namespace kinematics {
 
-	PinJoint::PinJoint(int id, bool ground, const glm::dvec2& pos, double z) : Joint() {
+	PinJoint::PinJoint(int id, bool ground, const glm::dvec2& pos, int z) : Joint() {
 		this->id = id;
 		this->type = TYPE_PIN;
 		this->ground = ground;

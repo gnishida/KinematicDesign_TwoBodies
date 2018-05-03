@@ -21,8 +21,10 @@ namespace kinematics {
 		QMap<int, std::vector<int>> collisions2;	// store all the indices of connectors that this connector collide
 													// key of map is the joint id, and value is the list of connect ids
 		QMap<int, bool> neighbors;	// store all the indices of neighbor connectors
+		int z;
 
 	public:
+		JointConnector() {}
 		JointConnector(boost::shared_ptr<Joint> joint, const glm::dvec2& closest_pt);
 		JointConnector(boost::shared_ptr<Joint> joint, const glm::dvec2& closest_pt, boost::shared_ptr<BodyGeometry> body);
 		JointConnector(const std::vector<boost::shared_ptr<Joint>>& joints);

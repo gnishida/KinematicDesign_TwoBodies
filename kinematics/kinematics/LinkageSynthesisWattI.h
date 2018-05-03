@@ -34,6 +34,7 @@ namespace kinematics {
 		double check(const std::vector<std::vector<glm::dmat3x3>>& poses, const std::vector<glm::dvec2>& points);
 
 		void generate3DGeometry(const Kinematics& kinematics, std::vector<Vertex>& vertices);
+		void generateJointGeometry(const glm::dvec2& pos, int bottom_z, int top_z, const glm::vec4& color, std::vector<Vertex>& vertices);
 		void saveSCAD(const QString& dirname, int index, const Kinematics& kinematics);
 		void saveSTL(const QString& dirname, const std::vector<Kinematics>& kinematics);
 	};
