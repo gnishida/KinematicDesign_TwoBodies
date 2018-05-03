@@ -1,9 +1,9 @@
-﻿Build started 5/3/2018 3:02:53 PM.
+﻿Build started 5/3/2018 4:11:36 PM.
      1>Project "C:\gen\GitHub\KinematicDesign_TwoBodies\KinematicDesign_TwoBodies\KinematicDesign_TwoBodies.vcxproj" on node 2 (Build target(s)).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(388,5): warning MSB8028: The intermediate directory (x64\Release\) contains files shared from another project (KinematicDesign.vcxproj).  This can lead to incorrect clean and rebuild behavior.
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include /I.\GeneratedFiles\Release /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtCore /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtGui /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtOpenGL /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtWidgets /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtXml /I..\glm /I..\glew /I..\opencv\include /I"C:\CGAL-4.10.1\include" /I"C:\CGAL-4.10.1\auxiliary\gmp\include" /IC:\boost_1_58 /I..\dlib\include /I..\kinematics /nologo /W1 /WX- /O2 /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_OPENGL_LIB /D QT_WIDGETS_LIB /D QT_XML_LIB /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt ..\kinematics\kinematics\GLUtils.cpp
-         GLUtils.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include /I.\GeneratedFiles\Release /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtCore /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtGui /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtOpenGL /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtWidgets /IC:\Qt\Qt5.6.0\5.6\msvc2013_64\include\QtXml /I..\glm /I..\glew /I..\opencv\include /I"C:\CGAL-4.10.1\include" /I"C:\CGAL-4.10.1\auxiliary\gmp\include" /IC:\boost_1_58 /I..\dlib\include /I..\kinematics /nologo /W1 /WX- /O2 /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_NO_DEBUG /D NDEBUG /D QT_CORE_LIB /D QT_GUI_LIB /D QT_OPENGL_LIB /D QT_WIDGETS_LIB /D QT_XML_LIB /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt ..\kinematics\kinematics\KinematicUtils.cpp
+         KinematicUtils.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\gen\GitHub\KinematicDesign_TwoBodies\x64\Release\\KinematicDesign_TwoBodies.exe" /NOLOGO /LIBPATH:C:\Qt\Qt5.6.0\5.6\msvc2013_64\lib /LIBPATH:..\opencv\lib /LIBPATH:..\glew /LIBPATH:"C:\CGAL-4.10.1\lib" /LIBPATH:"C:\CGAL-4.10.1\auxiliary\gmp\lib" /LIBPATH:"C:\boost_1_58\lib64-msvc-12.0" /LIBPATH:..\dlib\lib qtmain.lib Qt5Core.lib Qt5Gui.lib Qt5OpenGL.lib opengl32.lib glu32.lib Qt5Widgets.lib Qt5Xml.lib opencv_world300.lib glew32.lib "CGAL-vc120-mt-4.10.1.lib" "CGAL_Core-vc120-mt-4.10.1.lib" "CGAL_ImageIO-vc120-mt-4.10.1.lib" "libgmp-10.lib" "libmpfr-4.lib" "libboost_thread-vc120-mt-1_58.lib" dlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:\gen\GitHub\KinematicDesign_TwoBodies\x64\Release\KinematicDesign_TwoBodies.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\gen\GitHub\KinematicDesign_TwoBodies\x64\Release\KinematicDesign_TwoBodies.lib" /MACHINE:X64 x64\Release\BBox.obj
          x64\Release\BodyGeometry.obj
@@ -52,4 +52,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:14.20
+Time Elapsed 00:00:08.90

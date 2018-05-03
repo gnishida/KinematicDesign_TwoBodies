@@ -427,7 +427,7 @@ namespace kinematics {
 			}
 		}
 
-		void drawPolygon(const std::vector<glm::vec2>& points, const glm::vec4& color, const glm::mat4& mat, std::vector<Vertex>& vertices, bool flip) {
+		void drawPolygon(const std::vector<glm::dvec2>& points, const glm::vec4& color, const glm::mat4& mat, std::vector<Vertex>& vertices, bool flip) {
 			glm::vec3 p1(mat * glm::vec4(points.back(), 0, 1));
 			glm::vec3 p2(mat * glm::vec4(points[0], 0, 1));
 
@@ -640,10 +640,10 @@ namespace kinematics {
 
 			for (CDT::Finite_faces_iterator fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
 				if (fit->info().in_domain()) {
-					std::vector<glm::vec2> triangle;
+					std::vector<glm::dvec2> triangle;
 					for (int i = 0; i < 3; i++) {
 						CDT::Vertex_handle vh = fit->vertex(i);
-						triangle.push_back(glm::vec2(vh->point().x(), vh->point().y()));
+						triangle.push_back(glm::dvec2(vh->point().x(), vh->point().y()));
 					}
 					drawPolygon(triangle, color, mat, vertices, flip);
 				}

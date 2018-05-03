@@ -620,7 +620,7 @@ namespace kinematics {
 		return ans;
 	}
 
-	std::vector<glm::dvec2> generateBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, float link_width) {
+	std::vector<glm::dvec2> generateBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, double link_width) {
 		std::vector<glm::dvec2> ans;
 
 		glm::dvec2 vec = glm::normalize(p2 - p1);
@@ -635,7 +635,7 @@ namespace kinematics {
 		return ans;
 	}
 
-	std::vector<glm::dvec2> generateRoundedBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, float link_radius, int num_slices) {
+	std::vector<glm::dvec2> generateRoundedBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, double link_radius, int num_slices) {
 		std::vector<glm::dvec2> ans;
 
 		double theta0 = atan2(p2.y - p1.y, p2.x - p1.x) + M_PI * 0.5;
@@ -651,6 +651,48 @@ namespace kinematics {
 				double theta = theta0 + M_PI * 2 / num_slices * k;
 				ans.push_back(glm::dvec2(cos(theta) * link_radius + p2.x, sin(theta) * link_radius + p2.y));
 			}
+		}
+
+		return ans;
+	}
+
+	std::vector<glm::dvec2> generateRoundedTrianglePolygon(const std::vector<glm::dvec2>& points, double link_radius, int num_slices) {
+		std::vector<glm::dvec2> ans;
+
+		// check if points are counter-clockwise order
+		std::vector<glm::dvec2> polygon = points;
+		if (crossProduct(points[1] - points[0], points[2] - points[1]) < 0) {
+			std::reverse(polygon.begin(), polygon.end());
+		}
+
+		glm::dvec2 prev_pt;
+		for (int i = 0; i < polygon.size(); i++) {
+			int prev = (i - 1 + polygon.size()) % polygon.size();
+			int next = (i + 1) % polygon.size();
+
+			glm::dvec2 prev_edge_dir = polygon[i] - polygon[prev];
+			glm::dvec2 prev_perp_dir(prev_edge_dir.y, -prev_edge_dir.x);
+			prev_perp_dir /= glm::length(prev_perp_dir);
+
+			glm::dvec2 edge_dir = polygon[next] - polygon[i];
+			glm::dvec2 perp_dir(edge_dir.y, -edge_dir.x);
+			perp_dir /= glm::length(perp_dir);
+
+			glm::dvec2 prev_pt = polygon[i] + prev_perp_dir * link_radius;
+			glm::dvec2 cur_pt = polygon[i] + perp_dir * link_radius;
+
+			{
+				double theta1 = atan2(prev_pt.y - polygon[i].y, prev_pt.x - polygon[i].x);
+				double theta2 = atan2(cur_pt.y - polygon[i].y, cur_pt.x - polygon[i].x);
+				if (theta2 < theta1) theta2 += M_PI * 2;
+
+				int slices = std::max(1, (int)((theta2 - theta1) / M_PI / 2 * num_slices));
+				for (int k = 0; k < slices; k++) {
+					double theta = theta1 + (theta2 - theta1) / slices * k;
+					ans.push_back(glm::dvec2(cos(theta) * link_radius + polygon[i].x, sin(theta) * link_radius + polygon[i].y));
+				}
+			}
+			ans.push_back(cur_pt);
 		}
 
 		return ans;

@@ -94,8 +94,9 @@ namespace kinematics {
 	BBox boundingBox(const std::vector<glm::dvec2>& points);
 	std::vector<std::vector<glm::dvec2>> unionPolygon(std::vector<std::vector<glm::dvec2>> polygons);
 
-	std::vector<glm::dvec2> generateBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, float link_width);
-	std::vector<glm::dvec2> generateRoundedBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, float link_radius, int num_slices = 36);
+	std::vector<glm::dvec2> generateBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, double link_width);
+	std::vector<glm::dvec2> generateRoundedBarPolygon(const glm::dvec2& p1, const glm::dvec2& p2, double link_radius, int num_slices = 36);
+	std::vector<glm::dvec2> generateRoundedTrianglePolygon(const std::vector<glm::dvec2>& points, double link_radius, int num_slices = 36);
 	std::vector<glm::dvec2> generateCirclePolygon(const glm::dvec2& p, float radius, int num_slices = 36);
 
 	typedef std::vector<glm::dvec2> contour;
