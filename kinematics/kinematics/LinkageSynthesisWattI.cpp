@@ -578,7 +578,7 @@ namespace kinematics {
 		// run forward until collision is deteted or all the poses are reached
 		while (true) {
 			try {
-				kinematics.stepForward(true, false);
+				kinematics.stepForward(2, false);
 			}
 			catch (char* ex) {
 				// if only some of the poses are reached before collision, the collision is detected.
