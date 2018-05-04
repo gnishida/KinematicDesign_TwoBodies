@@ -37,6 +37,7 @@ namespace kinematics {
 		void generateJointGeometry(const glm::dvec2& pos, int bottom_z, int top_z, const glm::vec4& color, std::vector<Vertex>& vertices);
 		void saveSCAD(const QString& dirname, int index, const Kinematics& kinematics);
 		void saveSTL(const QString& dirname, const std::vector<Kinematics>& kinematics);
+		void generateJointGeometry(const glm::dvec2& pos, int bottom_z, int top_z, std::vector<Polygon25D>& polygons);
 	};
 
 }

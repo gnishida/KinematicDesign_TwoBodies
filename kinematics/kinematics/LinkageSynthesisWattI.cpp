@@ -53,11 +53,11 @@ namespace kinematics {
 			}
 			
 			/*
-			points[0] = glm::dvec2(29.847, 8.5493);
+			points[0] = glm::dvec2(29.847, 8.54938);
 			points[1] = glm::dvec2(32.6999, 14.2596);
 			points[2] = glm::dvec2(42.8333, 5.67388);
 			points[3] = glm::dvec2(33.7698, 9.19524);
-			points[4] = glm::dvec2(26.798, 20.149);
+			points[4] = glm::dvec2(26.798, 20.1149);
 			points[5] = glm::dvec2(42.5028, 8.20261);
 			points[6] = glm::dvec2(32.7426, 18.1497);
 			*/
@@ -514,9 +514,9 @@ namespace kinematics {
 		kinematics::Kinematics kinematics = constructKinematics(poses, points, {}, moving_bodies, false, fixed_bodies, connector_pts);
 
 		// add the fixed rigid bodies to the fixed joints of all the linkages
-		for (int i = 0; i < fixed_bodies.size(); i++) {
+		/*for (int i = 0; i < fixed_bodies.size(); i++) {
 			kinematics.diagram.addBody(kinematics.diagram.joints[0], kinematics.diagram.joints[1], fixed_bodies[i]);
-		}
+		}*/
 
 		kinematics.diagram.initialize();
 
@@ -945,6 +945,160 @@ namespace kinematics {
 	}
 
 	void LinkageSynthesisWattI::saveSCAD(const QString& dirname, int index, const Kinematics& kinematics) {
+		// generate geometry of rigid bodies
+		for (int j = 0; j < kinematics.diagram.bodies.size(); j++) {
+			if (j == 0) {
+				// HACK: for the first moving body, we need to add a hole for the joint connectors
+				std::vector<std::vector<glm::dvec3>> holes(4);
+				for (int hi = 0; hi < 4; hi++) {
+					glm::dvec2 center = (hi < 2) ? kinematics.diagram.joints[2]->pos : kinematics.diagram.joints[5]->pos;
+					double z;
+					if (hi == 0) z = kinematics.diagram.connectors[2].z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - 0.1;
+					else if (hi == 1) z = -options->body_depth - kinematics.diagram.connectors[2].z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - 0.1;
+					else if (hi == 2) z = kinematics.diagram.connectors[3].z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - 0.1;
+					else z = -options->body_depth - kinematics.diagram.connectors[3].z * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - 0.1;
+
+					holes[hi].resize(32);
+					for (int k = 0; k < 32; k++) {
+						double theta = (double)k / 32 * M_PI * 2;
+						holes[hi][k] = glm::dvec3(center.x + cos(theta) * options->hole_radius, center.y + sin(theta) * options->hole_radius, z);
+					}
+				}
+				QString name = QString("body_%1_%2").arg(index).arg(j);
+				QString filename = dirname + "/" + name + ".scad";
+				SCADExporter::save(filename, name, kinematics.diagram.bodies[j], holes, options->link_depth + 0.2);
+			}
+			else {
+				QString name = QString("body_%1_%2").arg(index).arg(j);
+				QString filename = dirname + "/" + name + ".scad";
+				SCADExporter::save(filename, name, kinematics.diagram.bodies[j]);
+			}
+		}
+
+		// generate geometry of links
+		for (int j = 0; j < kinematics.diagram.links.size(); j++) {
+			// For the coupler, we can use the moving body itself as a coupler, 
+			// so we do not need to create a coupler link.
+			if (!kinematics.diagram.links[j]->actual_link) continue;
+
+			if (kinematics.diagram.links[j]->joints.size() == 2) {
+				// this is for link 0 and 3
+				glm::dvec2& p1 = kinematics.diagram.links[j]->joints[0]->pos;
+				glm::dvec2& p2 = kinematics.diagram.links[j]->joints[1]->pos;
+				std::vector<glm::dvec2> pts = generateRoundedBarPolygon(glm::vec2(), p2 - p1, options->link_width / 2);
+				std::vector<std::vector<glm::dvec2>> holes(2);
+				holes[0] = generateCirclePolygon(glm::vec2(), options->hole_radius);
+				holes[1] = generateCirclePolygon(p2 - p1, options->hole_radius);
+
+				QString name = QString("link_%1_%2").arg(index).arg(j);
+				QString filename = dirname + "/" + name + ".scad";
+				SCADExporter::save(filename, name, pts, holes, options->link_depth);
+			}
+			else if (kinematics.diagram.links[j]->joints.size() == 3 && j == 1) {
+				// this is for link 1
+				std::vector<glm::dvec2> pts = generateRoundedTrianglePolygon({ kinematics.diagram.links[j]->joints[0]->pos, kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[j]->joints[2]->pos }, options->link_width / 2);
+
+				std::vector<std::vector<glm::dvec2>> holes(3);
+				holes[0] = generateCirclePolygon(kinematics.diagram.links[j]->joints[0]->pos, options->hole_radius);
+				holes[1] = generateCirclePolygon(kinematics.diagram.links[j]->joints[1]->pos, options->hole_radius);
+				holes[2] = generateCirclePolygon(kinematics.diagram.links[j]->joints[2]->pos, options->hole_radius);
+
+				QString name = QString("link_%1_%2").arg(index).arg(j);
+				QString filename = dirname + "/" + name + ".scad";
+				SCADExporter::save(filename, name, pts, holes, options->link_depth);
+			}
+			else if (kinematics.diagram.links[j]->joints.size() == 3) {
+				// this is for link 2
+				std::vector<glm::dvec2> pts = generateRoundedTrianglePolygon({ kinematics.diagram.links[j]->joints[0]->pos, kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[j]->joints[2]->pos }, options->link_width / 2);
+								
+				std::vector<int> zs2 = { kinematics.diagram.connectors[2].z, kinematics.diagram.links[0]->z, kinematics.diagram.links[2]->z };
+				std::sort(zs2.begin(), zs2.end());
+				std::vector<int> zs5 = { kinematics.diagram.connectors[3].z, kinematics.diagram.links[2]->z, kinematics.diagram.links[4]->z };
+				std::sort(zs5.begin(), zs5.end());
+
+				std::vector<Polygon25D> polygons;
+				// joint [2]
+				generateJointGeometry(kinematics.diagram.links[j]->joints[0]->pos, zs2[1], zs2[2], polygons);
+				generateJointGeometry(kinematics.diagram.links[j]->joints[0]->pos, zs2[1], zs2[0], polygons);
+
+				// joint [3]
+				generateJointGeometry(kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[2]->z, kinematics.diagram.links[1]->z, polygons);
+
+				// joint [5]
+				generateJointGeometry(kinematics.diagram.links[j]->joints[2]->pos, zs5[1], zs5[2], polygons);
+				generateJointGeometry(kinematics.diagram.links[j]->joints[2]->pos, zs5[1], zs5[0], polygons);
+
+				QString name = QString("link_%1_%2").arg(index).arg(j);
+				QString filename = dirname + "/" + name + ".scad";
+				SCADExporter::save(filename, name, pts, options->link_depth, polygons);
+
+				/////////////////////////////////////////////////////////
+				// vertical flip for the other side
+
+				{
+					// this is for link 2
+					std::vector<glm::dvec2> pts = generateRoundedTrianglePolygon({ kinematics.diagram.links[j]->joints[0]->pos, kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[j]->joints[2]->pos }, options->link_width / 2);
+
+					std::vector<int> zs2 = { kinematics.diagram.connectors[2].z, kinematics.diagram.links[0]->z, kinematics.diagram.links[2]->z };
+					std::sort(zs2.begin(), zs2.end());
+					std::vector<int> zs5 = { kinematics.diagram.connectors[3].z, kinematics.diagram.links[2]->z, kinematics.diagram.links[4]->z };
+					std::sort(zs5.begin(), zs5.end());
+
+					std::vector<Polygon25D> polygons;
+					// joint [2]
+					generateJointGeometry(kinematics.diagram.links[j]->joints[0]->pos, zs2[1], zs2[2], polygons);
+					generateJointGeometry(kinematics.diagram.links[j]->joints[0]->pos, zs2[1], zs2[0], polygons);
+
+					// joint [3]
+					generateJointGeometry(kinematics.diagram.links[j]->joints[1]->pos, kinematics.diagram.links[2]->z, kinematics.diagram.links[1]->z, polygons);
+
+					// joint [5]
+					generateJointGeometry(kinematics.diagram.links[j]->joints[2]->pos, zs5[1], zs5[2], polygons);
+					generateJointGeometry(kinematics.diagram.links[j]->joints[2]->pos, zs5[1], zs5[0], polygons);
+
+					QString name = QString("link_%1_%2_flipped").arg(index).arg(j);
+					QString filename = dirname + "/" + name + ".scad";
+					SCADExporter::save(filename, name, pts, options->link_depth, polygons);
+				}
+			}
+		}
+	}
+
+	void LinkageSynthesisWattI::generateJointGeometry(const glm::dvec2& pos, int bottom_z, int top_z, std::vector<Polygon25D>& polygons) {
+		if (bottom_z <= top_z) {
+			double z = options->link_depth;
+			double height = (top_z - bottom_z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
+			std::vector<glm::dvec2> pts = generateCirclePolygon(pos, options->link_width / 2);
+			polygons.push_back(Polygon25D(pts, z, z + height, false));
+
+			z += height;
+			height = options->link_depth + options->gap * 2;
+			pts = generateCirclePolygon(pos, options->hole_radius);
+			polygons.push_back(Polygon25D(pts, z, z + height, false));
+
+			z += height;
+			height = options->joint_cap_depth;
+			pts = generateCirclePolygon(pos, options->joint_cap_radius1);
+			std::vector<glm::dvec2> pts2 = generateCirclePolygon(pos, options->joint_cap_radius2);
+			polygons.push_back(Polygon25D(pts2, pts, z, z + height, false));
+		}
+		else {
+			double z = 0;
+			double height = (bottom_z - top_z) * (options->link_depth + options->gap * 2 + options->joint_cap_depth) - options->link_depth - options->gap;
+			std::vector<glm::dvec2> pts = generateCirclePolygon(pos, options->link_width / 2);
+			polygons.push_back(Polygon25D(pts, z - height, z, false));
+
+			z -= height;
+			height = options->link_depth + options->gap * 2;
+			pts = generateCirclePolygon(pos, options->hole_radius);
+			polygons.push_back(Polygon25D(pts, z - height, z, false));
+
+			z -= height;
+			height = options->joint_cap_depth;
+			pts = generateCirclePolygon(pos, options->joint_cap_radius1);
+			std::vector<glm::dvec2> pts2 = generateCirclePolygon(pos, options->joint_cap_radius2);
+			polygons.push_back(Polygon25D(pts, pts2, z - height, z, false));
+		}
 	}
 
 }

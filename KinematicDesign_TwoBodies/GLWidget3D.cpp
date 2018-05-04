@@ -828,6 +828,16 @@ void GLWidget3D::keyPressEvent(QKeyEvent *e) {
 			stop();
 		}
 		break;
+	case Qt::Key_Up:
+		for (int i = 0; i < kinematics.size(); i++) {
+			kinematics[i].simulation_speed *= 2;
+		}
+		break;
+	case Qt::Key_Down:
+		for (int i = 0; i < kinematics.size(); i++) {
+			kinematics[i].simulation_speed *= 0.5;
+		}
+		break;
 	default:
 		break;
 	}
