@@ -512,33 +512,19 @@ namespace kinematics {
 	bool LinkageSynthesisWattI::checkCollision(const std::vector<std::vector<glm::dmat3x3>>& poses, const std::vector<glm::dvec2>& points, const std::vector<Object25D>& fixed_bodies, const std::vector<Object25D>& moving_bodies) {
 		std::vector<glm::dvec2> connector_pts;
 		kinematics::Kinematics kinematics = constructKinematics(poses, points, {}, moving_bodies, false, fixed_bodies, connector_pts);
-
-		// add the fixed rigid bodies to the fixed joints of all the linkages
-		/*for (int i = 0; i < fixed_bodies.size(); i++) {
-			kinematics.diagram.addBody(kinematics.diagram.joints[0], kinematics.diagram.joints[1], fixed_bodies[i]);
-		}*/
-
 		kinematics.diagram.initialize();
 
 		// calculate the rotational angle of the driving crank for 1st, 2nd, and last poses
 		// i.e., angles[0] = first pose, angles[1] = second pose, angles[2] = last pose
 		std::vector<double> angles(3);
-
-
-		glm::dvec2 p2(glm::inverse(poses[0][0]) * glm::dvec3(points[2], 1));
-		glm::dvec2 p3(glm::inverse(poses[0][0]) * glm::dvec3(points[3], 1));
-
+		glm::dvec2 w(glm::inverse(poses[0][0]) * glm::dvec3(points[2], 1));
 		for (int i = 0; i < 2; i++) {
-			glm::dvec2 P2(poses[0][i] * glm::dvec3(p2, 1));
-			glm::dvec2 P3(poses[0][i] * glm::dvec3(p3, 1));
-			
-			angles[i] = atan2(P2.y - points[0].y, P2.x - points[0].x);
+			glm::dvec2 W = glm::dvec2(poses[0][i] * glm::dvec3(w, 1));
+			angles[i] = atan2(W.y - points[0].y, W.x - points[0].x);
 		}
 		{
-			glm::dvec2 P2(poses[0].back() * glm::dvec3(p2, 1));
-			glm::dvec2 P3(poses[0].back() * glm::dvec3(p3, 1));
-
-			angles[2] = atan2(P2.y - points[0].y, P2.x - points[0].x);
+			glm::dvec2 W = glm::dvec2(poses[0].back() * glm::dvec3(w, 1));
+			angles[2] = atan2(W.y - points[0].y, W.x - points[0].x);
 		}
 
 		// order the angles based on their signs
