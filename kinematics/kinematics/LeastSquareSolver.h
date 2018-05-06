@@ -31,8 +31,17 @@ namespace kinematics {
 		double operator() (const column_vector& arg) const;
 
 	private:
-		std::vector<std::vector<glm::dmat3x3>> poses;
+		std::vector<std::vector<std::vector<double>>> pose_params;
 	};
-	
+
+	class SolverDerivForWattI {
+	public:
+		SolverDerivForWattI(const std::vector<std::vector<glm::dmat3x3>>& poses);
+		const column_vector operator() (const column_vector& arg) const;
+
+	private:
+		std::vector<std::vector<std::vector<double>>> pose_params;
+	};
+
 }
 

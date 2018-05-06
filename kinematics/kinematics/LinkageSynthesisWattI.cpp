@@ -99,7 +99,7 @@ namespace kinematics {
 		}
 
 		try {
-			//find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), SolverDerivForLink(poses), starting_point, -1);
+			//find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), SolverDerivForWattI(poses), starting_point, -1);
 			find_min_using_approximate_derivatives(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), starting_point, -1);
 			
 			for (int i = 0; i < points.size(); i++) {
