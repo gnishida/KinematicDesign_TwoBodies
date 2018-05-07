@@ -789,61 +789,69 @@ namespace kinematics {
 	void KinematicDiagram::recordCollisionForConnectors() {
 		// check if connector i collide with joints of connector j
 		for (int i = 0; i < connectors.size(); i++) {
-			glm::dvec2 pt1a = connectors[i].joints[0]->pos;
-			glm::dvec2 pt1b = connectors[i].closest_pt;
-			if (connectors[i].type == 1) {
-				pt1b = connectors[i].body->localToWorld(connectors[i].closest_pt);
-			}
-			else if (connectors[i].type == 2) {
-				// pt1b = connectors[i].joints[1]->pos;
-				// Bug Fixed!
-				// Since the guide of the slider crank has three joints, [0] one end of the guide, [1] slider, and [2] the other end of the guide,
-				// we have to use [0] as pt1a and [2] as pt1b to represent the guide.
-				pt1b = connectors[i].joints.back()->pos;
-			}
+			int num_repetition = 1;
+			if (connectors[i].type == 2 && connectors[i].joints.size() > 2) num_repetition = connectors[i].joints.size() - 1;
+			for (int k = 0; k < num_repetition; k++) {
+				glm::dvec2 pt1a = connectors[i].joints[0]->pos;
+				glm::dvec2 pt1b = connectors[i].closest_pt;
+				if (connectors[i].type == 1) {
+					pt1b = connectors[i].body->localToWorld(connectors[i].closest_pt);
+				}
+				else if (connectors[i].type == 2) {
+					pt1b = connectors[i].joints[k + 1]->pos;
 
-			for (int j = 0; j < connectors.size(); j++) {
-				if (i == j) continue;
-
-				// if both connectors are attached to the fixed body, skip the collision check.
-				if (connectors[i].type == 0 && connectors[j].type == 0) continue;
-
-				// if both connectors are attached to the same moving body, skip the collision check.
-				if (connectors[i].type == 1 && connectors[j].type == 1 && connectors[i].body == connectors[j].body) continue;
-				
-
-
-
-				// check the collision for the connector base of connector j, which is case 1.
-				if (connectors[j].type == 0 || connectors[j].type == 1) {
-					glm::dvec2 pt2b = connectors[j].closest_pt;
-					if (connectors[j].type == 1) {
-						pt2b = connectors[j].body->localToWorld(connectors[j].closest_pt);
-					}
-					if (distanceToSegment(pt1a, pt1b, pt2b) < options->link_width) {
-						connectors[i].collisions1[j] = true;
-					}
+					/*
+					// pt1b = connectors[i].joints[1]->pos;
+					// Bug Fixed!
+					// Since the guide of the slider crank has three joints, [0] one end of the guide, [1] slider, and [2] the other end of the guide,
+					// we have to use [0] as pt1a and [2] as pt1b to represent the guide.
+					pt1b = connectors[i].joints.back()->pos;
+					*/
 				}
 
-				// check the collision for the joint of connector j, which is case 2.
-				for (int k = 0; k < connectors[j].joints.size(); k++) {
-					if (connectors[i].hasJoint(connectors[j].joints[k])) continue;
+				for (int j = 0; j < connectors.size(); j++) {
+					if (i == j) continue;
 
-					// check the collision for k-th joint of connector j, which is case 2.
-					if (distanceToSegment(pt1a, pt1b, connectors[j].joints[k]->pos) < options->link_width) {
-						bool same_body = false;
-						std::vector<int> list;
-						list.push_back(j);
-						for (int l = 0; l < connectors.size(); l++) {
-							if (l == j || l == i) continue;
-							if (connectors[l].hasJoint(connectors[j].joints[k])) {
-								list.push_back(l);
-								if (connectors[i].type == 0 && connectors[l].type == 0) same_body = true;
-								if (connectors[i].type == 1 && connectors[l].type == 1 && connectors[i].body == connectors[l].body) same_body = true;
-							}
+					// if both connectors are attached to the fixed body, skip the collision check.
+					if (connectors[i].type == 0 && connectors[j].type == 0) continue;
+
+					// if both connectors are attached to the same moving body, skip the collision check.
+					if (connectors[i].type == 1 && connectors[j].type == 1 && connectors[i].body == connectors[j].body) continue;
+
+
+
+
+					// check the collision for the connector base of connector j, which is case 1.
+					if (connectors[j].type == 0 || connectors[j].type == 1) {
+						glm::dvec2 pt2b = connectors[j].closest_pt;
+						if (connectors[j].type == 1) {
+							pt2b = connectors[j].body->localToWorld(connectors[j].closest_pt);
 						}
-						if (!same_body) {
-							connectors[i].collisions2[connectors[j].joints[k]->id] = list;
+						if (distanceToSegment(pt1a, pt1b, pt2b) < options->link_width) {
+							connectors[i].collisions1[j] = true;
+						}
+					}
+
+					// check the collision for the joint of connector j, which is case 2.
+					for (int k = 0; k < connectors[j].joints.size(); k++) {
+						if (connectors[i].hasJoint(connectors[j].joints[k])) continue;
+
+						// check the collision for k-th joint of connector j, which is case 2.
+						if (distanceToSegment(pt1a, pt1b, connectors[j].joints[k]->pos) < options->link_width) {
+							bool same_body = false;
+							std::vector<int> list;
+							list.push_back(j);
+							for (int l = 0; l < connectors.size(); l++) {
+								if (l == j || l == i) continue;
+								if (connectors[l].hasJoint(connectors[j].joints[k])) {
+									list.push_back(l);
+									if (connectors[i].type == 0 && connectors[l].type == 0) same_body = true;
+									if (connectors[i].type == 1 && connectors[l].type == 1 && connectors[i].body == connectors[l].body) same_body = true;
+								}
+							}
+							if (!same_body) {
+								connectors[i].collisions2[connectors[j].joints[k]->id] = list;
+							}
 						}
 					}
 				}
