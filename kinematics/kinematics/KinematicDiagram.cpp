@@ -790,15 +790,15 @@ namespace kinematics {
 		// check if connector i collide with joints of connector j
 		for (int i = 0; i < connectors.size(); i++) {
 			int num_repetition = 1;
-			if (connectors[i].type == 2 && connectors[i].joints.size() > 2) num_repetition = connectors[i].joints.size() - 1;
+			if (connectors[i].type == 2 && connectors[i].joints.size() > 2) num_repetition = connectors[i].joints.size();
 			for (int k = 0; k < num_repetition; k++) {
-				glm::dvec2 pt1a = connectors[i].joints[0]->pos;
+				glm::dvec2 pt1a = connectors[i].joints[k]->pos;
 				glm::dvec2 pt1b = connectors[i].closest_pt;
 				if (connectors[i].type == 1) {
 					pt1b = connectors[i].body->localToWorld(connectors[i].closest_pt);
 				}
 				else if (connectors[i].type == 2) {
-					pt1b = connectors[i].joints[k + 1]->pos;
+					pt1b = connectors[i].joints[(k + 1) % connectors[i].joints.size()]->pos;
 
 					/*
 					// pt1b = connectors[i].joints[1]->pos;
@@ -817,10 +817,7 @@ namespace kinematics {
 
 					// if both connectors are attached to the same moving body, skip the collision check.
 					if (connectors[i].type == 1 && connectors[j].type == 1 && connectors[i].body == connectors[j].body) continue;
-
-
-
-
+					
 					// check the collision for the connector base of connector j, which is case 1.
 					if (connectors[j].type == 0 || connectors[j].type == 1) {
 						glm::dvec2 pt2b = connectors[j].closest_pt;

@@ -53,6 +53,7 @@ namespace kinematics {
 			}
 			
 			/*
+			// car roof
 			points[0] = glm::dvec2(29.847, 8.54938);
 			points[1] = glm::dvec2(32.6999, 14.2596);
 			points[2] = glm::dvec2(42.8333, 5.67388);
@@ -60,6 +61,17 @@ namespace kinematics {
 			points[4] = glm::dvec2(26.798, 20.1149);
 			points[5] = glm::dvec2(42.5028, 8.20261);
 			points[6] = glm::dvec2(32.7426, 18.1497);
+			*/
+
+			/*
+			// folding chair
+			points[0] = glm::dvec2(-5.15146, 2.88155);
+			points[1] = glm::dvec2(-3.23746, 1.45836);
+			points[2] = glm::dvec2(5.78603, 1.05594);
+			points[3] = glm::dvec2(-13.2354, 2.98288);
+			points[4] = glm::dvec2(5.31989, 10.0897);
+			points[5] = glm::dvec2(13.3269, 2.39046);
+			points[6] = glm::dvec2(9.94019, 5.93421);
 			*/
 
 			if (!optimizeCandidate(poses, linkage_region_pts, bbox, points)) continue;
