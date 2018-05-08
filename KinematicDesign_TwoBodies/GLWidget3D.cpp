@@ -641,7 +641,7 @@ void GLWidget3D::calculateSolutions(int linkage_type, int num_samples, std::vect
 			for (int j = 0; j < synthesis.size(); j++) {
 				if (!synthesis[j]) continue;
 				kinematics::Kinematics kin;
-				solutions.push_back(kinematics::Solution(0, { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 } }, 0, 0, poses));
+				solutions.push_back(kinematics::Solution(0, {{ 0, 0 }, { 2, 0 }, { 0, 2 }, { 2, 2 }, { 1, 3 }, { 3, 3 }, { 3, 5 }}, 0, 0, poses));
 				std::vector<glm::dvec2> connector_pts;
 				kin = synthesis[j]->constructKinematics(poses, solutions.back().points, solutions.back().zorder, moving_bodies, true, fixed_bodies, connector_pts);
 				kinematics.push_back(kin);

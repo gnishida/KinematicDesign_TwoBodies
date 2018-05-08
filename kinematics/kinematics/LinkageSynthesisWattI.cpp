@@ -252,7 +252,7 @@ namespace kinematics {
 		double total_cw = 0;
 		double total_ccw = 0;
 		double prev = 0;
-		for (int i = 0; i < poses.size(); i++) {
+		for (int i = 0; i < poses[0].size(); i++) {
 			// calculate the coordinates of the circle point of the driving crank in the world coordinate system
 			glm::dvec2 X = glm::dvec2(poses[0][i] * glm::dvec3(inv_W, 1));
 			//std::cout << X.x << "," << X.y << std::endl;
@@ -330,7 +330,7 @@ namespace kinematics {
 		glm::dvec2 p2 = glm::dvec2(glm::inverse(poses[0][0]) * glm::dvec3(points[2], 1));
 		glm::dvec2 p3 = glm::dvec2(glm::inverse(poses[0][0]) * glm::dvec3(points[3], 1));
 
-		for (int i = 0; i < poses.size(); i++) {
+		for (int i = 0; i < poses[0].size(); i++) {
 			// calculate the coordinates of the circle point of the driving/driven cranks in the world coordinate system
 			glm::dvec2 P2 = glm::dvec2(poses[0][i] * glm::dvec3(p2, 1));
 			glm::dvec2 P3 = glm::dvec2(poses[0][i] * glm::dvec3(p3, 1));
