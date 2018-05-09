@@ -1071,7 +1071,7 @@ namespace kinematics {
 
 			z += height;
 			height = options->link_depth + options->gap * 2;
-			pts = generateCirclePolygon(pos, options->hole_radius);
+			pts = generateCirclePolygon(pos, options->joint_radius);
 			polygons.push_back(Polygon25D(pts, z, z + height, false));
 
 			z += height;
@@ -1088,7 +1088,7 @@ namespace kinematics {
 
 			z -= height;
 			height = options->link_depth + options->gap * 2;
-			pts = generateCirclePolygon(pos, options->hole_radius);
+			pts = generateCirclePolygon(pos, options->joint_radius);
 			polygons.push_back(Polygon25D(pts, z - height, z, false));
 
 			z -= height;
