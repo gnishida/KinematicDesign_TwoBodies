@@ -791,14 +791,14 @@ namespace kinematics {
 		for (int i = 0; i < connectors.size(); i++) {
 			int num_repetition = 1;
 			if (connectors[i].type == 2 && connectors[i].joints.size() > 2) num_repetition = connectors[i].joints.size();
-			for (int k = 0; k < num_repetition; k++) {
-				glm::dvec2 pt1a = connectors[i].joints[k]->pos;
+			for (int l = 0; l < num_repetition; l++) {
+				glm::dvec2 pt1a = connectors[i].joints[l]->pos;
 				glm::dvec2 pt1b = connectors[i].closest_pt;
 				if (connectors[i].type == 1) {
 					pt1b = connectors[i].body->localToWorld(connectors[i].closest_pt);
 				}
 				else if (connectors[i].type == 2) {
-					pt1b = connectors[i].joints[(k + 1) % connectors[i].joints.size()]->pos;
+					pt1b = connectors[i].joints[(l + 1) % connectors[i].joints.size()]->pos;
 
 					/*
 					// pt1b = connectors[i].joints[1]->pos;
