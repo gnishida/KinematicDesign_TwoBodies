@@ -1061,17 +1061,33 @@ namespace kinematics {
 				QString filename = dirname + "/" + name + ".scad";
 				SCADExporter::save(filename, name, pts, holes, options->link_depth, polygons);
 			}
-			else if (j == 3) {
-				glm::dvec2& p1 = kinematics.diagram.links[j]->joints[0]->pos;
-				glm::dvec2& p2 = kinematics.diagram.links[j]->joints[1]->pos;
+			else if (j == 4) {
+				std::vector<int> zs5 = { kinematics.diagram.connectors[3].z, kinematics.diagram.links[2]->z, kinematics.diagram.links[4]->z };
+				std::sort(zs5.begin(), zs5.end());
+
+				bool has_joint5 = (zs5[1] == kinematics.diagram.links[4]->z);
+
+				glm::dvec2& p1 = kinematics.diagram.joints[5]->pos;
+				glm::dvec2& p2 = kinematics.diagram.joints[6]->pos;
 				std::vector<glm::dvec2> pts = generateRoundedBarPolygon(glm::vec2(), p2 - p1, options->link_width / 2);
-				std::vector<std::vector<glm::dvec2>> holes(2);
-				holes[0] = generateCirclePolygon(glm::vec2(), options->hole_radius);
-				holes[1] = generateCirclePolygon(p2 - p1, options->hole_radius);
+				std::vector<std::vector<glm::dvec2>> holes;
+				if (!has_joint5) holes.push_back(generateCirclePolygon(glm::vec2(), options->hole_radius));
+				holes.push_back(generateCirclePolygon(p2 - p1, options->hole_radius));
+
+				std::vector<Polygon25D> polygons;
+				if (has_joint5) {
+					// joint [5]
+					generateJointGeometry(glm::vec2(), zs5[1], zs5[2], polygons);
+					generateJointGeometry(glm::vec2(), zs5[1], zs5[0], polygons);
+
+					QString name = QString("link_%1_%2").arg(index).arg(j);
+					QString filename = dirname + "/" + name + ".scad";
+					SCADExporter::save(filename, name, pts, holes, options->link_depth, polygons);
+				}
 
 				QString name = QString("link_%1_%2").arg(index).arg(j);
 				QString filename = dirname + "/" + name + ".scad";
-				SCADExporter::save(filename, name, pts, holes, options->link_depth);
+				SCADExporter::save(filename, name, pts, holes, options->link_depth, polygons);
 			}
 		}
 	}
