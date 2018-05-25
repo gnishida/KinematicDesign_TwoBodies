@@ -826,7 +826,7 @@ namespace kinematics {
 		lengths.push_back(glm::length(P6 - P5));
 
 		double ans = 0.0;
-		for (int i = 1; i < poses.size(); i++) {
+		for (int i = 1; i < poses[0].size(); i++) {
 			glm::dvec2 P2b(poses[0][i] * glm::dvec3(p2, 1));
 			glm::dvec2 P3b(poses[0][i] * glm::dvec3(p3, 1));
 			glm::dvec2 P4b(poses[1][i] * glm::dvec3(p4, 1));
@@ -845,8 +845,8 @@ namespace kinematics {
 			lengths2.push_back(glm::length(P6b - P4b));
 			lengths2.push_back(glm::length(P6b - P5b));
 
-			for (int i = 0; i < lengths.size(); i++) {
-				ans += (lengths[i] - lengths2[i]) * (lengths[i] - lengths2[i]);
+			for (int j = 0; j < lengths.size(); j++) {
+				ans += (lengths[j] - lengths2[j]) * (lengths[j] - lengths2[j]);
 			}
 		}
 

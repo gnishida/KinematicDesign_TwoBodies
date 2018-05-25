@@ -480,11 +480,6 @@ void GLWidget3D::saveSCAD(const QString& dirname) {
 }
 
 void GLWidget3D::saveImage(const QString& filename) {
-	/*
-	QPixmap pixmap(size());
-	render(&pixmap);
-	pixmap.save(filename);
-	*/
 	QImage image = grabFrameBuffer();
 	image.save(filename);
 }
