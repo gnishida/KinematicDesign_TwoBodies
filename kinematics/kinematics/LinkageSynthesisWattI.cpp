@@ -111,8 +111,8 @@ namespace kinematics {
 		}
 
 		try {
-			//find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), SolverDerivForWattI(poses), starting_point, -1);
-			find_min_using_approximate_derivatives(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), starting_point, -1);
+			find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), SolverDerivForWattI(poses), starting_point, -1);
+			//find_min_using_approximate_derivatives(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-7), SolverForWattI(poses), starting_point, -1);
 			
 			for (int i = 0; i < points.size(); i++) {
 				points[i] = glm::dvec2(starting_point(i * 2, 0), starting_point(i * 2 + 1, 0));
@@ -139,7 +139,10 @@ namespace kinematics {
 	double LinkageSynthesisWattI::calculateCost(Solution& solution, const std::vector<Object25D>& moving_bodies, const cv::Mat& dist_map, const BBox& dist_map_bbox) {
 		double dist = 0;
 		for (int i = 0; i < solution.points.size(); i++) {
-			dist += dist_map.at<double>(solution.points[i].y - dist_map_bbox.minPt.y, solution.points[i].x - dist_map_bbox.minPt.x);
+			int r = solution.points[i].y - dist_map_bbox.minPt.y;
+			int c = solution.points[i].x - dist_map_bbox.minPt.x;
+			if (r >= 0 && r < dist_map.rows && c >= 0 && c < dist_map.cols) dist += dist_map.at<double>(r, c);
+			else dist += dist_map.rows + dist_map.cols;
 		}
 		//double tortuosity = tortuosityOfTrajectory(solution.poses, solution.points, moving_body);
 		std::vector<glm::dvec2> connected_pts;

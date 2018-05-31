@@ -227,7 +227,7 @@ namespace kinematics {
 
 			// link 2 (P1 - P4)
 			ans(2) += 4 * z2 * (P4.x * (1 - std::cos(phi)) + P4.y * std::sin(phi) - s);
-			ans(3) += 4 * z2 * (P4.y * (1 - std::cos(phi)) - P4.y * std::sin(phi) - t);
+			ans(3) += 4 * z2 * (P4.y * (1 - std::cos(phi)) - P4.x * std::sin(phi) - t);
 			ans(8) += 4 * z2 * (P1.x * (1 - std::cos(phi)) - P1.y * std::sin(phi) + s * std::cos(phi) + t * std::sin(phi));
 			ans(9) += 4 * z2 * (P1.y * (1 - std::cos(phi)) + P1.x * std::sin(phi) - s * std::sin(phi) + t * std::cos(phi));
 
