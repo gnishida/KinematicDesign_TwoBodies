@@ -43,6 +43,11 @@ namespace kinematics {
 		for (int iter = 0; iter < num_samples && cnt < num_samples; iter++) {
 			printf("\rsampling %d/%d", cnt, iter + 1);
 
+			// perturbe the poses a little
+			double position_error = 0.0;
+			double orientation_error = 0.0;
+			std::vector<std::vector<glm::dmat3x3>> perturbed_poses = perturbPoses(poses, sigmas, position_error, orientation_error);
+
 			// sample joints within the linkage region
 			std::vector<glm::dvec2> points(7);
 			for (int i = 0; i < points.size(); i++) {
@@ -74,13 +79,13 @@ namespace kinematics {
 			points[6] = glm::dvec2(9.94019, 5.93421);
 			*/
 
-			if (!optimizeCandidate(poses, linkage_region_pts, bbox, points)) continue;
+			if (!optimizeCandidate(perturbed_poses, linkage_region_pts, bbox, points)) continue;
 
 			// check hard constraints
 			std::vector<std::vector<int>> zorder;
-			if (!checkHardConstraints(points, poses, linkage_region_pts, linkage_avoidance_pts, moving_bodies, zorder)) continue;
+			if (!checkHardConstraints(points, perturbed_poses, linkage_region_pts, linkage_avoidance_pts, moving_bodies, zorder)) continue;
 			
-			solutions.push_back(Solution(0, points, 0, 0, poses, zorder));
+			solutions.push_back(Solution(0, points, 0, 0, perturbed_poses, zorder));
 			cnt++;
 		}
 
