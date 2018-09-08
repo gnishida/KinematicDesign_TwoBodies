@@ -98,7 +98,7 @@ namespace kinematics {
 	*/
 	bool LinkageSynthesisWattI::optimizeCandidate(const std::vector<std::vector<glm::dmat3x3>>& poses, const std::vector<glm::dvec2>& linkage_region_pts, const BBox& bbox, std::vector<glm::dvec2>& points) {
 		if (!optimizeLink(poses, linkage_region_pts, bbox, points)) return false;
-		if (check(poses, points) > 1.0) return false;
+		if (check(poses, points) > 0.1) return false;
 
 		return true;
 	}
@@ -1013,7 +1013,6 @@ namespace kinematics {
 		lengths.push_back(glm::length(P5 - P3));
 		lengths.push_back(glm::length(P4 - P1));
 		lengths.push_back(glm::length(P4 - P3));
-		lengths.push_back(glm::length(P4 - P3));
 		lengths.push_back(glm::length(P6 - P4));
 		lengths.push_back(glm::length(P6 - P5));
 
@@ -1032,7 +1031,6 @@ namespace kinematics {
 			lengths2.push_back(glm::length(P5b - P2b));
 			lengths2.push_back(glm::length(P5b - P3b));
 			lengths2.push_back(glm::length(P4b - P1));
-			lengths2.push_back(glm::length(P4b - P3b));
 			lengths2.push_back(glm::length(P4b - P3b));
 			lengths2.push_back(glm::length(P6b - P4b));
 			lengths2.push_back(glm::length(P6b - P5b));
