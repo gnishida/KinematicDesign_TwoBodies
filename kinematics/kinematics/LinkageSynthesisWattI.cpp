@@ -97,17 +97,6 @@ namespace kinematics {
 	* If it fails to optimize, return false.
 	*/
 	bool LinkageSynthesisWattI::optimizeCandidate(const std::vector<std::vector<glm::dmat3x3>>& poses, std::vector<glm::dvec2>& points) {
-		if (!optimizeLink(poses, points)) return false;
-		if (check(poses, points) > 0.1) return false;
-
-		return true;
-	}
-
-	/**
-	 * @param linkage_region_pts_local	linkage region in the local coordinate system of moving objects (i = 0, 1)
-	 * @param bbox_local				bounding box in the local coordinate system of moving objects (i = 0, 1)
-	 */
-	bool LinkageSynthesisWattI::optimizeLink(const std::vector<std::vector<glm::dmat3x3>>& poses, std::vector<glm::dvec2>& points) {
 		// setup the initial parameters for optimization
 		column_vector starting_point(points.size() * 2);
 		for (int i = 0; i < points.size(); i++) {
@@ -116,7 +105,7 @@ namespace kinematics {
 		}
 
 		try {
-			find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-5), SolverForWattI(poses), SolverDerivForWattI(poses), starting_point, -1);
+			if (find_min(dlib::bfgs_search_strategy(), dlib::objective_delta_stop_strategy(1e-5), SolverForWattI(poses), SolverDerivForWattI(poses), starting_point, 0) > 0.1) return false;
 			for (int i = 0; i < points.size(); i++) {
 				points[i] = glm::dvec2(starting_point(i * 2, 0), starting_point(i * 2 + 1, 0));
 			}
@@ -984,66 +973,6 @@ namespace kinematics {
 
 		kinematics.clear();
 		return length_of_trajectory / length_of_straight;
-	}
-
-	/**
-	 * Calculate the deviation of the link lengths across the poses.
-	 *
-	 * @param poses		poses
-	 * @param points	the coordinates of the joints at the first pose
-	 * @return			square root of the sum of the devation of the link lengths
-	 */
-	double LinkageSynthesisWattI::check(const std::vector<std::vector<glm::dmat3x3>>& poses, const std::vector<glm::dvec2>& points) {
-		glm::dvec2 P0 = points[0];
-		glm::dvec2 P1 = points[1];
-		glm::dvec2 P2 = points[2];
-		glm::dvec2 P3 = points[3];
-		glm::dvec2 P4 = points[4];
-		glm::dvec2 P5 = points[5];
-		glm::dvec2 P6 = points[6];
-
-		glm::dvec2 p2(glm::inverse(poses[0][0]) * glm::dvec3(P2, 1));
-		glm::dvec2 p3(glm::inverse(poses[0][0]) * glm::dvec3(P3, 1));
-		glm::dvec2 p4(glm::inverse(poses[1][0]) * glm::dvec3(P4, 1));
-		glm::dvec2 p5(glm::inverse(poses[0][0]) * glm::dvec3(P5, 1));
-		glm::dvec2 p6(glm::inverse(poses[1][0]) * glm::dvec3(P6, 1));
-		
-		std::vector<double> lengths;
-		lengths.push_back(glm::length(P2 - P0));
-		lengths.push_back(glm::length(P3 - P1));
-		lengths.push_back(glm::length(P3 - P2));
-		lengths.push_back(glm::length(P5 - P2));
-		lengths.push_back(glm::length(P5 - P3));
-		lengths.push_back(glm::length(P4 - P1));
-		lengths.push_back(glm::length(P4 - P3));
-		lengths.push_back(glm::length(P6 - P4));
-		lengths.push_back(glm::length(P6 - P5));
-
-		double ans = 0.0;
-		for (int i = 1; i < poses[0].size(); i++) {
-			glm::dvec2 P2b(poses[0][i] * glm::dvec3(p2, 1));
-			glm::dvec2 P3b(poses[0][i] * glm::dvec3(p3, 1));
-			glm::dvec2 P4b(poses[1][i] * glm::dvec3(p4, 1));
-			glm::dvec2 P5b(poses[0][i] * glm::dvec3(p5, 1));
-			glm::dvec2 P6b(poses[1][i] * glm::dvec3(p6, 1));
-
-			std::vector<double> lengths2;
-			lengths2.push_back(glm::length(P2b - P0));
-			lengths2.push_back(glm::length(P3b - P1));
-			lengths2.push_back(glm::length(P3b - P2b));
-			lengths2.push_back(glm::length(P5b - P2b));
-			lengths2.push_back(glm::length(P5b - P3b));
-			lengths2.push_back(glm::length(P4b - P1));
-			lengths2.push_back(glm::length(P4b - P3b));
-			lengths2.push_back(glm::length(P6b - P4b));
-			lengths2.push_back(glm::length(P6b - P5b));
-
-			for (int j = 0; j < lengths.size(); j++) {
-				ans += (lengths[j] - lengths2[j]) * (lengths[j] - lengths2[j]);
-			}
-		}
-
-		return std::sqrt(ans);
 	}
 
 	void LinkageSynthesisWattI::generate3DGeometry(const Kinematics& kinematics, std::vector<Vertex>& vertices) {
