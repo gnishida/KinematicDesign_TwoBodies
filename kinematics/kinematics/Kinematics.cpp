@@ -111,7 +111,7 @@ namespace kinematics {
 		if (motion_range_restricted && min_angle < max_angle) {
 			glm::dvec2 a = diagram.joints[2]->pos - diagram.joints[0]->pos;
 			double angle = std::atan2(a.y, a.x);
-			double margin = 0.01;
+			double margin = 0.001;
 			if (angle < min_angle - margin) angle += M_PI * 2;
 			else if (angle > max_angle + margin) angle -= M_PI * 2;
 			if (angle < min_angle - margin || angle > max_angle + margin) throw "Out of motion range";
@@ -160,7 +160,7 @@ namespace kinematics {
 		if (motion_range_restricted && min_angle < max_angle) {
 			glm::dvec2 a = diagram.joints[2]->pos - diagram.joints[0]->pos;
 			double angle = std::atan2(a.y, a.x);
-			double margin = 0.01;
+			double margin = 0.001;
 			if (angle < min_angle - margin) angle += M_PI * 2;
 			else if (angle > max_angle + margin) angle -= M_PI * 2;
 			if (angle < min_angle - margin || angle > max_angle + margin) throw "Out of motion range";
